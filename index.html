@@ -1,0 +1,344 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>BizTrade Live Sessions</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@600;700&display=swap">
+<style>
+/* Layout: one narrow column. Navy "next session" panel on top, plain rows below, host controls last. */
+:root{
+  --bg:#F4F8F6; --surface:#FFFFFF; --ink:#0B1736; --muted:#5B6B82; --line:#DCE5E2;
+  --green:#0E9F65; --green-soft:#E1F4EB; --on-green:#FFFFFF; --warn:#B45309; --warn-soft:#FDF0DC;
+  --panel:#0B1736; --panel-ink:#FFFFFF; --panel-muted:#A9B7D0; --panel-green:#2BD18B; --on-panel-green:#04210F;
+  --font-display:'Poppins',system-ui,sans-serif; --font-body:'Inter',system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0A1226; --surface:#111C3A; --ink:#E8EEF8; --muted:#93A3BD; --line:#1F2F55;
+    --green:#2BD18B; --green-soft:#12333A; --on-green:#04210F; --warn:#F5B65A; --warn-soft:#3A2B12;
+    --panel:#13244A; --panel-ink:#FFFFFF; --panel-muted:#AFC0DD; --panel-green:#2BD18B; --on-panel-green:#04210F;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0A1226; --surface:#111C3A; --ink:#E8EEF8; --muted:#93A3BD; --line:#1F2F55;
+  --green:#2BD18B; --green-soft:#12333A; --on-green:#04210F; --warn:#F5B65A; --warn-soft:#3A2B12;
+  --panel:#13244A; --panel-ink:#FFFFFF; --panel-muted:#AFC0DD; --panel-green:#2BD18B; --on-panel-green:#04210F;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:15px;line-height:1.5;
+  padding-block:24px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:28px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:12px;min-width:0}
+.brand svg{width:44px;height:44px;flex:none}
+.word{font-family:var(--font-display);font-weight:700;font-size:26px;line-height:1;letter-spacing:-.01em}
+.word b{color:var(--ink);font-weight:700}.word span{color:var(--green)}
+.sub{font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--muted);margin-top:4px;font-weight:600}
+.tz{font-size:12px;color:var(--muted)}
+h2{font-family:var(--font-display);font-size:18px;margin:0 0 12px;font-weight:600}
+.hero{background:var(--panel);color:var(--panel-ink);border-radius:14px;padding:22px;display:flex;flex-direction:column;gap:14px}
+.hero .eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--panel-muted);font-weight:600}
+.hero h3{font-family:var(--font-display);font-size:24px;line-height:1.2;margin:0;text-wrap:balance;font-weight:600}
+.hero .when{color:var(--panel-muted)}
+.count{font-family:var(--font-display);font-size:30px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--panel-green)}
+.count small{display:block;font-family:var(--font-body);font-size:12px;color:var(--panel-muted);font-weight:500;letter-spacing:.04em}
+.acts{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.btn{font:inherit;font-weight:600;border:1.5px solid var(--green);background:transparent;color:var(--green);padding:10px 18px;border-radius:10px;cursor:pointer;text-decoration:none;display:inline-block}
+.btn:hover{background:var(--green-soft)}
+.btn.primary{background:var(--green);color:var(--on-green)}
+.btn.primary:hover{filter:brightness(1.07)}
+.hero .btn{border-color:var(--panel-green);color:var(--panel-green)}
+.hero .btn.primary{background:var(--panel-green);color:var(--on-panel-green)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn:focus-visible,.link:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--green);outline-offset:2px}
+.link{font:inherit;background:none;border:0;color:inherit;opacity:.75;text-decoration:underline;cursor:pointer;padding:4px}
+.chip{display:inline-block;font-size:12px;font-weight:600;padding:3px 10px;border-radius:99px;background:var(--green-soft);color:var(--green)}
+.chip.warn{background:var(--warn-soft);color:var(--warn)}
+.hero .chip{background:rgba(43,209,139,.16);color:var(--panel-green)}
+.plat{font-size:12px;font-weight:600;padding:3px 10px;border-radius:99px;border:1px solid var(--line);color:var(--muted)}
+.rows{display:flex;flex-direction:column;border-top:1px solid var(--line)}
+.row{display:flex;gap:16px;align-items:center;padding:14px 0;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.date{width:54px;flex:none;text-align:center;font-family:var(--font-display);line-height:1}
+.date b{display:block;font-size:24px}.date span{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-family:var(--font-body);font-weight:600}
+.info{flex:1 1 200px;min-width:0}
+.info .t{font-weight:600}.info .m{color:var(--muted);font-size:13px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:2px}
+.row .acts{margin-left:auto}
+.row .link{color:var(--muted)}
+.field{display:flex;flex-direction:column;gap:4px;min-width:0}
+.field label{font-size:12px;font-weight:600;color:var(--muted)}
+input,select{font:inherit;color:var(--ink);background:var(--surface);border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;width:100%;min-width:0}
+.who{display:flex;gap:12px;align-items:end;flex-wrap:wrap;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px}
+.who .field{flex:1 1 220px}
+.note{color:var(--muted);font-size:13px}
+.msg{min-height:20px;font-size:13px;font-weight:600;color:var(--warn)}
+.msg.ok{color:var(--green)}
+.empty{padding:22px;border:1.5px dashed var(--line);border-radius:12px;color:var(--muted)}
+.host{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.grid .wide{grid-column:1/-1}
+.mrow{border-top:1px solid var(--line);padding:12px 0;display:flex;flex-direction:column;gap:6px}
+.mrow .top{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:space-between}
+.mrow .who2{font-size:13px;color:var(--muted);overflow-wrap:anywhere}
+.mbtns{display:flex;gap:6px;flex-wrap:wrap}
+.mbtns .btn{padding:6px 12px;font-size:13px}
+.danger{border-color:var(--warn);color:var(--warn)}
+@media (prefers-reduced-motion:no-preference){.btn{transition:background .15s,filter .15s}}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <svg viewBox="0 0 44 44" aria-hidden="true"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#22D68E"/><stop offset="1" stop-color="#078457"/></linearGradient></defs><rect width="44" height="44" rx="11" fill="url(#g)"/><text x="10" y="35" font-family="Poppins,Arial,sans-serif" font-weight="700" font-size="30" fill="#fff">B</text><polyline points="25,16 29,12 32,15 38,8" fill="none" stroke="#fff" stroke-width="2.2" stroke-linejoin="round"/><polygon points="34.5,7 39.5,6.5 39,11.5" fill="#fff"/></svg>
+      <div><div class="word"><b>Biz</b><span>Trade</span></div><div class="sub">Live sessions</div></div>
+    </div>
+    <div class="tz" id="tz"></div>
+  </header>
+
+  <div id="app"><div class="empty">Loading sessions…</div></div>
+
+  <section id="bookAs" hidden>
+    <div class="who">
+      <div class="field"><label for="name">Your name</label><input id="name" autocomplete="name" placeholder="Name shown to the host"></div>
+    </div>
+    <div class="msg" id="msg" role="status"></div>
+  </section>
+
+  <section class="host" id="host" hidden>
+    <h2 style="margin:0">Host controls</h2>
+    <form id="lockForm" class="grid" autocomplete="off"><div class="field wide"><label for="pw" id="pwLabel">Host password</label><input id="pw" type="password" required autocomplete="current-password" placeholder="At least 6 characters"></div><div class="wide acts"><button class="btn primary" type="submit" id="pwBtn">Unlock</button><span class="msg" id="pwMsg" role="status"></span></div></form>
+    <div id="hostBody" hidden>
+    <p class="note" style="margin:0">Add a Google Meet or Zoom link and a start time. Students see the link only after they book, and it unlocks 10 minutes before the start.</p>
+    <form id="addForm" class="grid" autocomplete="off">
+      <div class="field wide"><label for="fTitle">Session title</label><input id="fTitle" required placeholder="e.g. XAUUSD live market breakdown"></div>
+      <div class="field"><label for="fWhen">Start time</label><input id="fWhen" type="datetime-local" required></div>
+      <div class="field"><label for="fDur">Length (minutes)</label><input id="fDur" type="number" min="15" max="480" value="60" required></div>
+      <div class="field wide"><label for="fLink">Meet or Zoom link</label><input id="fLink" type="url" required placeholder="https://meet.google.com/abc-defg-hij"></div>
+      <div class="wide acts"><button class="btn primary" type="submit" id="fBtn">Add session</button><span class="msg" id="hostMsg" role="status"></span></div>
+    </form>
+    <div id="manage"></div></div>
+  </section>
+</div>
+
+<script>
+(function(){
+  var LEAD=10*60000, TAIL=15*60000;
+  var $=function(id){return document.getElementById(id)};
+  var esc=function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};
+  var S={db:null,uid:null,isAdmin:false,canWrite:false,sessions:[],links:{},bookings:[],loaded:false,err:'',confirmDel:null,name:''};
+  try{S.name=localStorage.getItem('bt-name')||''}catch(e){}
+  try{$('tz').textContent='Times shown in '+Intl.DateTimeFormat().resolvedOptions().timeZone.replace('_',' ')}catch(e){}
+
+  function status(s,now){
+    if(s.live) return 'open';
+    var end=s.startsAt+(s.durationMin||60)*60000+TAIL;
+    if(now>end) return 'ended';
+    return now>=s.startsAt-LEAD?'open':'upcoming';
+  }
+  function platform(url){
+    try{var h=new URL(url).hostname;
+      if(h==='meet.google.com') return 'Google Meet';
+      if(h==='zoom.us'||/\.zoom\.us$/.test(h)||/\.zoom\.com$/.test(h)||h==='zoom.com') return 'Zoom';
+    }catch(e){}
+    return '';
+  }
+  function fmtDate(ms){return new Date(ms).toLocaleString(undefined,{weekday:'short',day:'numeric',month:'short',hour:'numeric',minute:'2-digit'})}
+  function cd(ms){
+    if(ms<=0) return 'now';
+    var s=Math.floor(ms/1000),d=Math.floor(s/86400),h=Math.floor(s%86400/3600),m=Math.floor(s%3600/60),r=s%60;
+    var p=function(n){return String(n).padStart(2,'0')};
+    return d>0?d+'d '+h+'h '+m+'m':p(h)+':'+p(m)+':'+p(r);
+  }
+  function mineOf(){
+    var b=S.bookings.filter(function(x){return x.id===S.uid})[0];
+    return (b&&b.sessions)||{};
+  }
+  function action(s,st,hero){
+    var booked=!!mineOf()[s.id];
+    if(booked&&st==='open'){
+      var url=S.links[s.id];
+      if(url&&/^https:\/\//.test(url)) return '<a class="btn primary" href="'+esc(url)+'" target="_blank" rel="noopener">Join '+esc(platform(url)||'session')+' now</a>';
+      return '<span class="chip warn">Host has not added the link yet</span>';
+    }
+    if(booked) return '<span class="chip">Booked</span><button class="link" data-act="cancel" data-id="'+s.id+'">Cancel</button>';
+    return '<button class="btn'+(hero?' primary':'')+'" data-act="book" data-id="'+s.id+'"'+(S.canWrite?'':' disabled')+'>Book seat</button>';
+  }
+  function platChip(s){var p=platform(S.links[s.id]||s.platform||'');return p?'<span class="plat">'+esc(p)+'</span>':'<span class="plat">'+esc(s.platform||'Live')+'</span>'}
+
+  function renderApp(){
+    var app=$('app');
+    if(!S.db){app.innerHTML='<div class="empty">Sign in to Claude to see and book live sessions.</div>';return}
+    if(S.err){app.innerHTML='<div class="empty">'+esc(S.err)+'</div>';return}
+    if(!S.loaded){app.innerHTML='<div class="empty">Loading sessions…</div>';return}
+    var now=Date.now();
+    var vis=S.sessions.filter(function(s){return status(s,now)!=='ended'}).sort(function(a,b){return a.startsAt-b.startsAt});
+    if(!vis.length){
+      app.innerHTML='<div class="empty">No live sessions are scheduled right now.'+(S.isAdmin?' Add one in Host controls below.':' Check back soon.')+'</div>';
+      return;
+    }
+    var h=vis[0],hs=status(h,now),html='';
+    html+='<section class="hero"><div class="eyebrow">'+(hs==='open'?'Open now':'Next live session')+'</div>'
+      +'<h3>'+esc(h.title)+'</h3>'
+      +'<div class="when">'+esc(fmtDate(h.startsAt))+' · '+(h.durationMin||60)+' min</div>'
+      +'<div class="count"><span data-cd="'+h.id+'"></span><small data-cdl="'+h.id+'"></small></div>'
+      +'<div class="acts">'+platChip(h)+action(h,hs,true)+'</div></section>';
+    var rest=vis.slice(1);
+    if(rest.length){
+      html+='<section><h2>Later sessions</h2><div class="rows">';
+      rest.forEach(function(s){
+        var st=status(s,now),d=new Date(s.startsAt);
+        html+='<div class="row"><div class="date"><b>'+d.getDate()+'</b><span>'+d.toLocaleString(undefined,{month:'short'})+'</span></div>'
+          +'<div class="info"><div class="t">'+esc(s.title)+'</div><div class="m"><span>'+esc(d.toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'}))+' · '+(s.durationMin||60)+' min</span>'+platChip(s)+'</div></div>'
+          +'<div class="acts">'+action(s,st,false)+'</div></div>';
+      });
+      html+='</div></section>';
+    }
+    app.innerHTML=html;
+    tick();
+  }
+
+  function renderManage(){
+    if(!S.isAdmin||!unlocked){return}
+    var el=$('manage'),now=Date.now();
+    var all=S.sessions.slice().sort(function(a,b){return a.startsAt-b.startsAt});
+    if(!all.length){el.innerHTML='';return}
+    var tot=S.bookings.reduce(function(n,b){return n+Object.keys(b.sessions||{}).length},0);var html='<h2 style="margin:8px 0 0">All sessions · '+tot+' bookings total</h2>';
+    all.forEach(function(s){
+      var st=status(s,now);
+      var people=S.bookings.filter(function(b){return b.sessions&&b.sessions[s.id]}).map(function(b){return b.name||'Unnamed'});
+      html+='<div class="mrow"><div class="top"><div><b>'+esc(s.title)+'</b><div class="note">'+esc(fmtDate(s.startsAt))+' · '+(s.durationMin||60)+' min · '+esc(platform(S.links[s.id]||'')||'No link')+'</div></div>'
+        +'<span class="chip'+(st==='ended'?' warn':'')+'">'+(st==='open'?(s.live?'Live (manual)':'Link open'):st==='ended'?'Ended':'Scheduled')+'</span></div>'
+        +'<div class="who2"><b style="color:var(--ink)">'+people.length+' booked</b>'+(people.length?' · '+esc(people.join(', ')):'')+'</div>'
+        +'<div class="mbtns">'
+        +(st!=='ended'?(s.live?'<button class="btn" data-act="unlive" data-id="'+s.id+'">Stop early open</button>':'<button class="btn" data-act="live" data-id="'+s.id+'">Open link now</button>'):'')
+        +(S.confirmDel===s.id?'<button class="btn danger" data-act="del2" data-id="'+s.id+'">Confirm delete</button><button class="btn" data-act="delno">Keep</button>':'<button class="btn danger" data-act="del" data-id="'+s.id+'">Delete</button>')
+        +'</div></div>';
+    });
+    el.innerHTML=html;
+  }
+
+  var lastSig='';
+  function sig(){var n=Date.now();return S.sessions.map(function(s){return s.id+status(s,n)}).join('|')}
+  function tick(){
+    var now=Date.now();
+    S.sessions.forEach(function(s){
+      var a=document.querySelector('[data-cd="'+s.id+'"]'),b=document.querySelector('[data-cdl="'+s.id+'"]');
+      if(!a)return;
+      var st=status(s,now);
+      if(st==='open'&&now>=s.startsAt){a.textContent='Live now';b.textContent='Join link is open'}
+      else if(st==='open'){a.textContent=cd(s.startsAt-now);b.textContent='until start · join link is open'}
+      else{a.textContent=cd(s.startsAt-now);b.textContent='until start · link opens 10 min before'}
+    });
+  }
+  setInterval(function(){
+    var g=sig();
+    if(g!==lastSig){lastSig=g;renderApp();renderManage()} else tick();
+  },1000);
+
+  function say(id,t,ok){var e=$(id);e.textContent=t;e.className='msg'+(ok?' ok':'')}
+
+  $('name').value=S.name;
+  $('name').addEventListener('input',function(){S.name=this.value.trim();try{localStorage.setItem('bt-name',S.name)}catch(e){}});
+
+  document.addEventListener('click',function(e){
+    var b=e.target.closest('[data-act]');if(!b||!S.db)return;
+    var act=b.getAttribute('data-act'),id=b.getAttribute('data-id');
+    if(act==='book')return book(id);
+    if(act==='cancel')return cancel(id);
+    if(!S.isAdmin||!unlocked)return;
+    if(act==='live'||act==='unlive')return S.db.doc('sessions/'+id).update({live:act==='live'}).catch(function(){say('hostMsg','Could not update the session.')});
+    if(act==='del'){S.confirmDel=id;return renderManage()}
+    if(act==='delno'){S.confirmDel=null;return renderManage()}
+    if(act==='del2'){S.confirmDel=null;
+      S.db.doc('sessions/'+id).delete().then(function(){return S.db.doc('links/'+id).delete()}).catch(function(){say('hostMsg','Could not delete the session.')});
+    }
+  });
+
+  function saveBooking(sessions){
+    return S.db.doc('bookings/'+S.uid).set({name:S.name,sessions:sessions});
+  }
+  function book(id){
+    if(!S.name){say('msg','Enter your name first, then tap Book seat.');$('name').focus();return}
+    if(!S.uid||!S.canWrite){say('msg','Your access is view-only. Ask the host for contributor access.');return}
+    var m=Object.assign({},mineOf());m[id]=Date.now();
+    say('msg','Booking…',true);
+    saveBooking(m).then(function(){say('msg','Seat booked. Your join link appears here when the session opens.',true)})
+      .catch(function(){say('msg','Booking failed. Check your connection and try again.')});
+  }
+  function cancel(id){
+    var m=Object.assign({},mineOf());delete m[id];
+    saveBooking(m).then(function(){say('msg','Booking cancelled.',true)}).catch(function(){say('msg','Could not cancel. Try again.')});
+  }
+
+  $('addForm').addEventListener('submit',function(e){
+    e.preventDefault();
+    if(!S.db||!S.isAdmin||!unlocked)return;
+    var title=$('fTitle').value.trim(),when=new Date($('fWhen').value).getTime(),dur=parseInt($('fDur').value,10),link=$('fLink').value.trim();
+    if(!title||isNaN(when)){say('hostMsg','Add a title and a start time.');return}
+    if(!/^https:\/\//.test(link)||!platform(link)){say('hostMsg','Use a Google Meet (meet.google.com) or Zoom (zoom.us) link starting with https://');return}
+    var btn=$('fBtn');btn.disabled=true;say('hostMsg','Saving…',true);
+    var ref=S.db.collection('sessions').doc();
+    ref.set({title:title,startsAt:when,durationMin:dur||60,platform:platform(link),live:false,createdAt:Date.now()})
+      .then(function(){return S.db.doc('links/'+ref.id).set({url:link})})
+      .then(function(){say('hostMsg','Session added.',true);$('addForm').reset();$('fDur').value=60})
+      .catch(function(){say('hostMsg','Could not save. Try again.')})
+      .then(function(){btn.disabled=false});
+  });
+
+  function snapList(snap){return snap.docs.map(function(d){var x=d.data()||{};x.id=d.id;return x})}
+
+  var unlocked=false;
+  function sha(t){return crypto.subtle.digest('SHA-256',new TextEncoder().encode(t)).then(function(h){return Array.from(new Uint8Array(h)).map(function(x){return x.toString(16).padStart(2,'0')}).join('')})}
+  function showHost(){$('lockForm').hidden=unlocked;$('hostBody').hidden=!unlocked;renderManage()}
+  function initHost(){
+    if(!S.isAdmin)return;
+    try{if(sessionStorage.getItem('bt-host')==='1')unlocked=true}catch(e){}
+    S.db.doc('host/config').get().then(function(snap){
+      S.cfg=snap.exists?snap.data():null;
+      $('pwLabel').textContent=S.cfg?'Host password':'Create your host password (first time only)';
+      $('pwBtn').textContent=S.cfg?'Unlock':'Save and unlock';
+    }).catch(function(){});
+    showHost();
+  }
+  $('lockForm').addEventListener('submit',function(e){
+    e.preventDefault();
+    var pw=$('pw').value;
+    if(pw.length<6){say('pwMsg','Use at least 6 characters.');return}
+    if(!(window.crypto&&crypto.subtle)){say('pwMsg','Password check is not available in this browser.');return}
+    function ok(){unlocked=true;try{sessionStorage.setItem('bt-host','1')}catch(e){}$('pw').value='';say('pwMsg','');showHost()}
+    sha('bt:'+pw).then(function(h){
+      if(!S.cfg){return S.db.doc('host/config').set({hash:h}).then(function(){S.cfg={hash:h};ok()})}
+      if(h===S.cfg.hash)ok();else say('pwMsg','Wrong password.');
+    }).catch(function(){say('pwMsg','Could not check the password. Try again.')});
+  });
+  async function init(){
+    var c=window.claude;
+    if(!c||!c.use){renderApp();return}
+    var db=await c.use('db'),user=await c.use('user');
+    if(!db){renderApp();return}
+    S.db=db;
+    try{S.uid=user?await user.id():null}catch(e){}
+    try{S.isAdmin=!!(user&&(user.canEdit()||user.isOwner()))}catch(e){}
+    try{var cw=user?await user.can('data.write'):null;S.canWrite=cw!==false}catch(e){S.canWrite=true}
+    $('bookAs').hidden=false;
+    $('host').hidden=!S.isAdmin;initHost();
+    var timer=setTimeout(function(){if(!S.loaded){S.err='Cannot reach the booking data yet. Check your connection.';renderApp()}},10000);
+    var fail=function(){clearTimeout(timer);S.err='Booking data is not available to you.';renderApp()};
+    db.collection('sessions').orderBy('startsAt').onSnapshot(function(snap){
+      clearTimeout(timer);S.err='';S.loaded=true;S.sessions=snapList(snap);lastSig=sig();renderApp();renderManage();
+    },fail);
+    db.collection('links').onSnapshot(function(snap){
+      var m={};snap.docs.forEach(function(d){var x=d.data();if(x&&x.url)m[d.id]=x.url});
+      S.links=m;renderApp();renderManage();
+    },function(){});
+    db.collection('bookings').onSnapshot(function(snap){
+      S.bookings=snapList(snap);renderApp();renderManage();
+    },function(){});
+    renderApp();
+  }
+  init();
+})();
+</script>
+
+</body></html>
